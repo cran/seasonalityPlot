@@ -1,0 +1,10 @@
+5c170e8b8ec5bb36ac8604843618a5ed *DESCRIPTION
+8f8403358cd01d6a6b2616d332d65f20 *NAMESPACE
+df512a46dcad71fb01187842bbae45d3 *R/seasonPlot.R
+fbbc95fd45466cc014e568cf8573db35 *inst/extdata/Days.Rds
+d7290cd2c2bb0f634ebef12d6065732d *inst/script/BTC.R
+ffe1355ce877072178f9070e0d364ac6 *inst/script/DJI.R
+508833b71832846e0b2d266e1ed7e617 *inst/script/ETH.R
+0626ee64c9c89558f57ec9bbab350ad3 *inst/script/IXIC.R
+636bf3447834267c5ba834b871eac013 *inst/script/SPY.R
+a7a8eb958a849c5837714488cd8668aa *man/seasonPlot.Rd
