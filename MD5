@@ -1,7 +1,7 @@
-634be80477e585df6f2dda401f2aab36 *DESCRIPTION
-8f8403358cd01d6a6b2616d332d65f20 *NAMESPACE
-b7744331a43c3d455956ab47add5baa7 *R/seasonPlot.R
-74dbbc53b26c07490c06e9f9f8b56c5e *README.md
+ec29b8193b28d66f510ee48eafa9090c *DESCRIPTION
+1003a45b808efc5b5fd17699e614b2aa *NAMESPACE
+f4a839284189acb9bcda6608d3a1f2eb *R/seasonPlot.R
+f34484f80400baba7b792be2bb7524ca *README.md
 fbbc95fd45466cc014e568cf8573db35 *inst/extdata/Days.Rds
 8b75ec73bc95406395c56f743c05953b *inst/images/SeasonalityPlot_BTC-USD_StartYear2014_EndYear2020.png
 d87d621269e415931aa4e8783526d66d *inst/images/SeasonalityPlot_ETH-USD_StartYear2015_EndYear2020.png
@@ -15,4 +15,4 @@ ffe1355ce877072178f9070e0d364ac6 *inst/script/DJI.R
 b8b45c80da34d3fd43100a8568b71146 *inst/script/HexSticker.R
 0626ee64c9c89558f57ec9bbab350ad3 *inst/script/IXIC.R
 636bf3447834267c5ba834b871eac013 *inst/script/SPY.R
-a7a8eb958a849c5837714488cd8668aa *man/seasonPlot.Rd
+184f742e8a2f0bd576fcd9e1be0bd0d0 *man/seasonPlot.Rd
