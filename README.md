@@ -1,4 +1,4 @@
-# [seasonalityPlot package (version 1.1.0)](https://github.com/kumeS/seasonalityPlot)
+# [seasonalityPlot package](https://github.com/kumeS/seasonalityPlot)
  <img src="https://github.com/kumeS/seasonalityPlot/blob/main/inst/images/hexSticker_seasonalityPlot.png" align="right" height="139" />
 
 [![CRAN](https://www.r-pkg.org/badges/version/seasonalityPlot)](https://CRAN.R-project.org/package=seasonalityPlot)
@@ -12,6 +12,10 @@ R package for Creating Seasonality Plots of Stock Prices and Cryptocurrencies
 [GitHub/seasonalityPlot](https://kumes.github.io/seasonalityPlot/)
 
 # Version
+
+1.2.1: Update seasonPlot & Add new function "CryptoRSIheatmap".
+
+1.1.1: Update Figures.
 
 1.1.0: CRAN 3rd version.
 
@@ -55,48 +59,61 @@ R CMD INSTALL seasonalityPlot
 ```r
 library(seasonalityPlot)
 
-#Plot an averaging seasonality of SPDR S&P500 ETF (SPY) between 2010 and 2020.
+#Plot an averaging seasonality of SPDR S&P500 ETF (SPY) between 2012 and 2022.
 seasonPlot(Symbols="SPY")
+
+#useAdjusted = TRUE
+seasonPlot(Symbols="SPY", useAdjusted = TRUE)
 ```
 
 <div style="text-align: center">
-  <img src="inst/images/SeasonalityPlot_SPY_StartYear2010_EndYear2020.png" width="750px">
+  <img src="inst/images/SeasonalityPlot_SPY_StartYear2012_EndYear2022.png" width="750px">
 </div>
 
 ```r
-#Plot an averaging seasonality of Dow Jones Industrial Average (^DJI) between 2010 and 2020.
+#Plot an averaging seasonality of Dow Jones Industrial Average (^DJI) between 2012 and 2022.
 seasonPlot(Symbols="^DJI")
 ```
 
 <div style="text-align: center">
-  <img src="inst/images/SeasonalityPlot_^DJI_StartYear2010_EndYear2020.png" width="750px">
+  <img src="inst/images/SeasonalityPlot_^DJI_StartYear2012_EndYear2022.png" width="750px">
 </div>
 
 ```r
-#Plot an averaging seasonality of NASDAQ Composite (^IXIC) between 2010 and 2020.
+#Plot an averaging seasonality of NASDAQ Composite (^IXIC) between 2012 and 2022.
 seasonPlot(Symbols="^IXIC")
 ```
 
 <div style="text-align: center">
-  <img src="inst/images/SeasonalityPlot_^IXIC_StartYear2010_EndYear2020.png" width="750px">
+  <img src="inst/images/SeasonalityPlot_^IXIC_StartYear2012_EndYear2022.png" width="750px">
 </div>
 
 ```r
-#Plot an averaging seasonality of Bitcoin (BTC-USD) between 2014 and 2020.
+#Plot an averaging seasonality of Bitcoin (BTC-USD) between 2017 and 2022.
 seasonPlot(Symbols="BTC-USD")
 ```
 
 <div style="text-align: center">
-  <img src="inst/images/SeasonalityPlot_BTC-USD_StartYear2014_EndYear2020.png" width="750px">
+  <img src="inst/images/SeasonalityPlot_BTC-USD_StartYear2017_EndYear2022.png" width="750px">
 </div>
 
 ```r
-#Plot an averaging seasonality of Ethereum (ETH-USD) between 2015 and 2020.
+#Plot an averaging seasonality of Ethereum (ETH-USD) between 2017 and 2022.
 seasonPlot(Symbols="ETH-USD")
 ```
 
 <div style="text-align: center">
-  <img src="inst/images/SeasonalityPlot_ETH-USD_StartYear2015_EndYear2020.png" width="750px">
+  <img src="inst/images/SeasonalityPlot_ETH-USD_StartYear2017_EndYear2022.png" width="750px">
+</div>
+
+```r
+#CryptoRSI Heatmap Function provides a heatmap visualization of RSI values for a specified number of cryptocurrencies.
+
+CryptoRSIheatmap(coin_num = 200, useRank = 1000, n = 21, useRankPlot = TRUE, OutputData = FALSE)
+```
+
+<div style="text-align: center">
+  <img src="inst/images/CryptoRSIheatmap.png" width="750px">
 </div>
 
 # License
