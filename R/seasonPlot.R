@@ -1,39 +1,39 @@
-##' @title seasonPlot: create seasonality variation plots for stock prices or cryptocurrencies
+##' @title Plot Seasonality Patterns of Stock Prices or Cryptocurrencies
 ##'
-##' @description This function is to easily create seasonality variation plots of
-##' annual averages of stock prices or cryptocurrencies with some color options.
-##' This can use the same symbols as the 'quantmod' package.
-##' For the average calculation, the trading days for each month are aligned and then
-##' the percentages of change with the beginning of the year being zero are calculated.
-##' This function can set any given time period for averaging.
-##' In addition, years with many missing data are automatically excluded before the average calculation.
-##' The positive and negative monthly changes are shown in green and red background color, respectively.
+##' @description This function retrieves price data for a specified symbol, calculates the percentage change 
+##'   from the beginning of each year, and visualizes seasonality patterns by averaging over multiple years. 
+##'   The plot highlights average monthly changes and can optionally color months with positive or negative growth. 
+##'   The function automatically excludes years or days with excessive missing data to improve accuracy. 
+##'   Customization options for line colors, background modes, fonts, and more are available.
 ##'
-##' @param Symbols a character vector specifying the names of each symbol to be loaded.
-##' e.g. ^IXIC (NASDAQ Composite), ^DJI (Dow Jones Industrial Average), SPY (SPDR S&P500 ETF),
-##' BTC-USD (Bitcoin), ETH-USD (Ethereum), and XRP-USD (Ripple).
+##' @param Symbols A character string representing the symbol for which to retrieve data. Examples include 
+##'   `^IXIC` (NASDAQ Composite), `^DJI` (Dow Jones Industrial Average), `SPY` (SPDR S&P500 ETF), `BTC-USD` (Bitcoin), 
+##'   `ETH-USD` (Ethereum), and `XRP-USD` (Ripple).
+##' @param StartYear A numeric value specifying the starting year (Gregorian calendar) for data aggregation. 
+##'   Defaults to 11 years before the current year.
+##' @param EndYear A numeric value specifying the ending year (Gregorian calendar) for data aggregation. 
+##'   Defaults to the previous year.
+##' @param useAdjusted Logical; if `TRUE`, the adjusted closing price (adjusted for dividends and splits) is used. 
+##'   If `FALSE`, the regular closing price is used. For cryptocurrencies, both options yield the same results.
+##' @param LineColor A numeric value (1 to 4) specifying the line color: `1` for red, `2` for blue, `3` for green, 
+##'   and `4` for black. Ignored when `BackgroundMode` is `TRUE`.
+##' @param xlab A character string for the X-axis label. Default is `"Month"`.
+##' @param BackgroundMode Logical; if `TRUE`, the background is colored based on whether the average monthly change 
+##'   is positive (green) or negative (red).
+##' @param alpha A numeric value (0.0 to 1.0) specifying the transparency level for the background color.
+##' @param Save Logical; if `TRUE`, saves the plot as a PNG image.
+##' @param output_width Width of the saved PNG image in pixels. Default is 1000.
+##' @param output_height Height of the saved PNG image in pixels. Default is 700.
+##' @param OutputData Logical; if `TRUE`, returns the data used for plotting as a `data.frame`.
+##' @param DayMissingThreshold A numeric threshold specifying the maximum allowable number of missing days per year.
+##' @param YearMissingThreshold A numeric threshold specifying the maximum allowable number of missing years.
+##' @param family A character string specifying the font family for plot text. Default is `"Helvetica"`.
+##' @param PlotAll Logical; if `TRUE`, displays the entire time series data using the `dygraph` package before 
+##'   creating the seasonality plot.
 ##'
-##' @param StartYear a numeric of start year (Common Er). The default is 11 years from now.
-##' @param EndYear a numeric of end year (Common Er). The default is the last year.
-##' @param useAdjusted Choose whether to use the closing price adjusted for dividends.
-##'   If FALSE, normal close price is used. In the case of cryptocurrencies,
-##'   the useAdjusted option is expected to return the same result.
-##' @param LineColor a numeric between 1 and 4; The value 1 is to select red1,
-##'   the value 2 is to select blue1, the value 3 is to select green1,
-##'   and the value 4 is to select black.
-##'   When BackgroundMode is TRUE, this argument is disabled.
-##' @param xlab a character of X-axis label.
-##' @param BackgroundMode a logical; draw a background color by react.
-##' @param alpha a numeric; The alpha parameter is a number between 0.0 (fully transparent)
-##'   and 1.0 (fully opaque).
-##' @param Save a logical; save as an image (PNG) or not
-##' @param output_width a output size of width (pixel). Initial value recommended.
-##' @param output_height a output size of height (pixel). Initial value recommended.
-##' @param OutputData a logical; output as a data.frame type or not.
-##' @param family a character of font.
-##' @param PlotAll a logical; display all period by dygraph function or not.
+##' @return A plot of the seasonality patterns for the specified symbol. If `OutputData` is `TRUE`, 
+##'   returns a list containing the symbol and the data used for the plot.
 ##'
-##' @return plot results
 ##' @author Satoshi Kume
 ##'
 ##' @import quantmod
@@ -45,20 +45,21 @@
 ##' @import graphics
 ##' @importFrom utils askYesNo
 ##' @importFrom zoo index
-##' @importFrom magrittr %>%
 ##' @importFrom lubridate year
 ##'
 ##' @export seasonPlot
 ##'
 ##' @examples
+##' \dontrun{
 ##' ## Plot seasonality of NASDAQ Composite Index (^IXIC)
 ##' seasonPlot(Symbols = "^IXIC", useAdjusted = TRUE)
 ##'
 ##' ## Plot seasonality of Bitcoin (BTC-USD)
-##' seasonPlot(Symbols = "BTC-USD", StartYear=2015, EndYear=2020)
+##' seasonPlot(Symbols = "BTC-USD", StartYear = 2015, EndYear = 2020)
 ##'
-##'
-
+##' ## Customize missing value tolerances
+##' seasonPlot(Symbols = "^IXIC", YearMissingThreshold = 200, DayMissingThreshold = 5)
+##' }
 
 seasonPlot <- function(Symbols,
                        StartYear = lubridate::year(Sys.Date())-11,
@@ -73,11 +74,15 @@ seasonPlot <- function(Symbols,
                        output_width=1000,
                        output_height=700,
                        family="Helvetica",
-                       PlotAll=FALSE){
+                       PlotAll=FALSE,
+                       YearMissingThreshold = 366*0.5,
+                       DayMissingThreshold = NULL ){
 
 oldpar <- graphics::par(no.readonly = TRUE)
 on.exit(graphics::par(oldpar))
-options("getSymbols.warning4.0"=FALSE)
+
+#Version: 1.3.1: remove
+#options("getSymbols.warning4.0"=FALSE)
 
 if(!is.numeric(StartYear)){return(message("Warning: No poper value of StartYear"))}
 if(!is.numeric(EndYear)){return(message("Warning: No poper value of EndYear"))}
@@ -146,9 +151,13 @@ for(m in 2:ncol(Dat01)){
   a <- Dat00[Dat00$Year == sub("Y", "", colnames(Dat01)[m]),]
   Dat01[c(Dat01$Date %in% a$Day),m] <- a$Close
 }
+
 #head(Dat01); tail(Dat01)
 #more that 366/2 days
-Dat02 <- Dat01[, as.vector(apply(Dat01, 2, function(x) sum(is.na(x))) < 366/2)]
+#v1.3.1
+#Dat02 <- Dat01[, as.vector(apply(Dat01, 2, function(x) sum(is.na(x))) < 366/2)]
+Dat02 <- Dat01[, apply(Dat01, 2, function(x) sum(is.na(x))) < YearMissingThreshold]
+
 Dat03 <- Dat02
 Dat02$Month <- substr(Dat02$Date, start=1, stop=2)
 Mon <- unique(Dat02$Month)
@@ -174,7 +183,13 @@ if(SUM == 0){
 }}
 
 #head(Dat03); tail(Dat03, n=15)
-Dat04 <- Dat03[as.vector(apply(Dat03, 1, function(x) sum(is.na(x)))) < diff(Date00)*0.5, ]
+#v1.3.1
+#Dat04 <- Dat03[as.vector(apply(Dat03, 1, function(x) sum(is.na(x)))) < diff(Date00)*0.5, ]
+if (is.null(DayMissingThreshold)) {
+  DayMissingThreshold <- (Date00[2] - Date00[1]) * 0.5
+}
+Dat04 <- Dat03[as.vector(apply(Dat03, 1, function(x) sum(is.na(x)))) < DayMissingThreshold, ]
+
 #head(Dat04); tail(Dat04)
 
 #Set the first day of the year as "0%".
@@ -264,6 +279,11 @@ if(A[2] < 0){A[2] <- floor(A[2]/10)*10}else{A[2] <- ceiling(A[2]/10)*10}
 A[1] <- signif(A[1], digits = nchar(as.character(abs(A[1])))-1)
 A[2] <- signif(A[2], digits = nchar(as.character(abs(A[2])))-1)
 B <- signif(diff(A), digits = 2)
+
+#v1.3.1: modify
+#A <- base::pretty(range(St), n = 10)
+#B <- base::diff(range(A)) / 10
+
 C <- cumsum(as.numeric(table(Dat05$Month)))
 
 if(BackgroundMode){
